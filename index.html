@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>青少年学业倦怠水平评估</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #f7fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
+        }
+        .hero-title {
+            font-family: 'Noto Serif SC', serif;
+            background: linear-gradient(135deg, #2c5282, #38b2ac);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .card-shadow {
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .progress-bar {
+            background: linear-gradient(90deg, #38b2ac, #2c5282);
+        }
+        .option-button {
+            transition: all 0.3s ease;
+        }
+        .option-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+        .option-button.selected {
+            background: linear-gradient(135deg, #2c5282, #38b2ac);
+            color: white;
+        }
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="bg-white/90 backdrop-blur-sm fixed w-full top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <h1 class="text-xl font-bold text-gray-800">学业倦怠评估</h1>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="index.html" class="text-blue-600 hover:text-blue-800 px-3 py-2 rounded-md text-sm font-medium transition-colors">问卷评估</a>
+                        <a href="data.html" class="text-gray-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">数据分析</a>
+                        <a href="info.html" class="text-gray-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">科普知识</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主要内容 -->
+    <main class="pt-20 pb-12">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <!-- 标题区域 -->
+            <div class="text-center mb-12 fade-in">
+                <h1 class="hero-title text-4xl md:text-5xl font-bold mb-6">
+                    青少年学业倦怠水平评估
+                </h1>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
+                    通过科学的问卷评估，了解您的学业状态，获得个性化的改善建议。所有数据仅用于个人参考，严格保护您的隐私。
+                </p>
+            </div>
+
+            <!-- 问卷容器 -->
+            <div class="bg-white rounded-2xl card-shadow p-8 mb-8 fade-in" id="survey-container">
+                
+                <!-- 问卷介绍 -->
+                <div id="intro-section" class="text-center">
+                    <div class="mb-8">
+                        <img src="resources/hero-image.png" alt="学生学习场景" class="w-full max-w-md mx-auto rounded-xl shadow-lg">
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">欢迎参与学业倦怠评估</h2>
+                    <p class="text-gray-600 mb-6 leading-relaxed">
+                        本问卷包含10道题目，涵盖注意力、疲劳程度、拖延情况、情绪状态等多个维度。
+                        完成问卷大约需要5-10分钟，您将获得详细的结果分析和改善建议。
+                    </p>
+                    <div class="bg-blue-50 rounded-lg p-4 mb-6">
+                        <p class="text-sm text-blue-700">
+                            <strong>隐私声明：</strong>您的所有回答仅用于生成本次评估报告，数据将在本地存储，不会上传到服务器。
+                        </p>
+                    </div>
+                    <button onclick="startSurvey()" class="bg-gradient-to-r from-blue-600 to-teal-500 text-white px-8 py-3 rounded-lg font-medium hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+                        开始评估
+                    </button>
+                </div>
+
+                <!-- 问卷题目 -->
+                <div id="question-section" class="hidden">
+                    <!-- 进度条 -->
+                    <div class="mb-8">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm text-gray-600">进度</span>
+                            <span class="text-sm text-gray-600" id="progress-text">1 / 10</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="progress-bar h-2 rounded-full transition-all duration-500" id="progress-bar" style="width: 10%"></div>
+                        </div>
+                    </div>
+
+                    <!-- 题目内容 -->
+                    <div id="question-content">
+                        <!-- 题目将通过JavaScript动态生成 -->
+                    </div>
+
+                    <!-- 导航按钮 -->
+                    <div class="flex justify-between mt-8">
+                        <button onclick="previousQuestion()" id="prev-btn" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            上一题
+                        </button>
+                        <button onclick="nextQuestion()" id="next-btn" class="px-6 py-2 bg-gradient-to-r from-blue-600 to-teal-500 text-white rounded-lg hover:shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            下一题
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 结果展示 -->
+                <div id="results-section" class="hidden">
+                    <div class="text-center mb-8">
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">您的评估结果</h2>
+                        <div id="result-summary" class="bg-gradient-to-r from-blue-50 to-teal-50 rounded-xl p-6 mb-6">
+                            <!-- 结果摘要将通过JavaScript生成 -->
+                        </div>
+                    </div>
+
+                    <!-- 雷达图 -->
+                    <div class="mb-8">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">各维度表现分析</h3>
+                        <div id="radar-chart" style="height: 400px;"></div>
+                    </div>
+
+                    <!-- 详细分析 -->
+                    <div id="detailed-analysis" class="space-y-6">
+                        <!-- 详细分析将通过JavaScript生成 -->
+                    </div>
+
+                    <!-- 建议 -->
+                    <div class="bg-teal-50 rounded-xl p-6 mt-8">
+                        <h3 class="text-xl font-bold text-teal-800 mb-4">个性化建议</h3>
+                        <div id="suggestions" class="space-y-3">
+                            <!-- 建议将通过JavaScript生成 -->
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-8">
+                        <button onclick="restartSurvey()" class="bg-gradient-to-r from-blue-600 to-teal-500 text-white px-8 py-3 rounded-lg font-medium hover:shadow-lg transition-all duration-300 transform hover:scale-105 mr-4">
+                            重新评估
+                        </button>
+                        <a href="data.html" class="inline-block bg-gray-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-gray-700 transition-colors">
+                            查看数据分析
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p class="text-gray-300">&copy; 2025 青少年学业倦怠评估系统. 专注于青少年心理健康与学习状态.</p>
+        </div>
+    </footer>
+
+    <script src="main.js"></script>
+</body>
+</html>

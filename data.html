@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据分析 - 青少年学业倦怠水平评估</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #f7fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
+        }
+        .hero-title {
+            font-family: 'Noto Serif SC', serif;
+            background: linear-gradient(135deg, #2c5282, #38b2ac);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .card-shadow {
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        .stat-card {
+            transition: all 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="bg-white/90 backdrop-blur-sm fixed w-full top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <h1 class="text-xl font-bold text-gray-800">学业倦怠评估</h1>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="index.html" class="text-gray-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">问卷评估</a>
+                        <a href="data.html" class="text-blue-600 hover:text-blue-800 px-3 py-2 rounded-md text-sm font-medium transition-colors">数据分析</a>
+                        <a href="info.html" class="text-gray-600 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">科普知识</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主要内容 -->
+    <main class="pt-20 pb-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <!-- 标题区域 -->
+            <div class="text-center mb-12 fade-in">
+                <h1 class="hero-title text-4xl md:text-5xl font-bold mb-6">
+                    数据分析仪表板
+                </h1>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
+                    基于问卷数据的深度分析，了解青少年学业倦怠的现状、趋势和关键洞察。
+                </p>
+            </div>
+
+            <!-- 数据概览 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12 fade-in">
+                <div class="bg-white rounded-xl p-6 card-shadow stat-card">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-full bg-blue-100 text-blue-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                            </svg>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600">总评估人数</p>
+                            <p class="text-2xl font-bold text-gray-900" id="total-count">1,247</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl p-6 card-shadow stat-card">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-full bg-red-100 text-red-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                            </svg>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600">高度倦怠</p>
+                            <p class="text-2xl font-bold text-gray-900" id="high-burnout">23.4%</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl p-6 card-shadow stat-card">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-full bg-yellow-100 text-yellow-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600">平均得分</p>
+                            <p class="text-2xl font-bold text-gray-900" id="avg-score">58.2</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl p-6 card-shadow stat-card">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-full bg-green-100 text-green-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600">状态良好</p>
+                            <p class="text-2xl font-bold text-gray-900" id="good-status">31.7%</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 筛选控制面板 -->
+            <div class="bg-white rounded-xl p-6 card-shadow mb-8 fade-in">
+                <h3 class="text-lg font-bold text-gray-800 mb-4">数据筛选</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">年龄段</label>
+                        <select id="age-filter" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="all">全部年龄段</option>
+                            <option value="12-14">12-14岁</option>
+                            <option value="15-17">15-17岁</option>
+                            <option value="18-20">18-20岁</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">性别</label>
+                        <select id="gender-filter" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="all">全部性别</option>
+                            <option value="male">男性</option>
+                            <option value="female">女性</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">时间范围</label>
+                        <select id="time-filter" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="all">全部时间</option>
+                            <option value="recent">最近一个月</option>
+                            <option value="quarter">最近三个月</option>
+                            <option value="year">最近一年</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mt-4 flex justify-end">
+                    <button onclick="applyFilters()" class="px-6 py-2 bg-gradient-to-r from-blue-600 to-teal-500 text-white rounded-lg hover:shadow-lg transition-all duration-300">
+                        应用筛选
+                    </button>
+                </div>
+            </div>
+
+            <!-- 图表区域 -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                
+                <!-- 倦怠程度分布 -->
+                <div class="bg-white rounded-xl p-6 card-shadow fade-in">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">倦怠程度分布</h3>
+                    <div id="burnout-distribution-chart" style="height: 300px;"></div>
+                </div>
+
+                <!-- 各维度平均得分 -->
+                <div class="bg-white rounded-xl p-6 card-shadow fade-in">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">各维度平均得分</h3>
+                    <div id="dimension-scores-chart" style="height: 300px;"></div>
+                </div>
+
+                <!-- 年龄段对比 -->
+                <div class="bg-white rounded-xl p-6 card-shadow fade-in">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">年龄段对比分析</h3>
+                    <div id="age-comparison-chart" style="height: 300px;"></div>
+                </div>
+
+                <!-- 趋势分析 -->
+                <div class="bg-white rounded-xl p-6 card-shadow fade-in">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">趋势分析</h3>
+                    <div id="trend-analysis-chart" style="height: 300px;"></div>
+                </div>
+            </div>
+
+            <!-- 数据洞察 -->
+            <div class="bg-white rounded-xl p-8 card-shadow fade-in">
+                <h3 class="text-2xl font-bold text-gray-800 mb-6">数据洞察</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <div class="flex items-start space-x-3">
+                            <div class="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                            <div>
+                                <h4 class="font-bold text-gray-800">注意力问题是主要因素</h4>
+                                <p class="text-gray-600 text-sm">数据显示，68%的学生在注意力维度得分较高，表明专注力是当前学业倦怠的主要挑战。</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
+                            <div>
+                                <h4 class="font-bold text-gray-800">高年级学生倦怠程度更高</h4>
+                                <p class="text-gray-600 text-sm">15-17岁年龄组的平均得分比12-14岁组高出12.3分，学业压力随年龄增长明显。</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="flex items-start space-x-3">
+                            <div class="w-2 h-2 bg-yellow-500 rounded-full mt-2 flex-shrink-0"></div>
+                            <div>
+                                <h4 class="font-bold text-gray-800">情绪状态影响显著</h4>
+                                <p class="text-gray-600 text-sm">情绪状态与整体倦怠程度呈强负相关，积极的情绪有助于缓解学业压力。</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-2 h-2 bg-purple-500 rounded-full mt-2 flex-shrink-0"></div>
+                            <div>
+                                <h4 class="font-bold text-gray-800">性别差异不明显</h4>
+                                <p class="text-gray-600 text-sm">男女学生在各维度得分差异小于5%，表明学业倦怠是普遍性问题。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p class="text-gray-300">&copy; 2025 青少年学业倦怠评估系统. 专注于青少年心理健康与学习状态.</p>
+        </div>
+    </footer>
+
+    <script>
+        // 图表实例
+        let charts = {};
+
+        // 模拟数据
+        const mockData = {
+            totalCount: 1247,
+            highBurnout: 23.4,
+            avgScore: 58.2,
+            goodStatus: 31.7,
+            burnoutDistribution: [
+                { name: '状态良好', value: 31.7, color: '#10b981' },
+                { name: '轻度倦怠', value: 28.4, color: '#f59e0b' },
+                { name: '中度倦怠', value: 16.5, color: '#ef4444' },
+                { name: '高度倦怠', value: 23.4, color: '#dc2626' }
+            ],
+            dimensionScores: {
+                '注意力': 65.2,
+                '疲劳程度': 58.8,
+                '拖延行为': 52.1,
+                '情绪状态': 61.4,
+                '学习动机': 55.7
+            },
+            ageComparison: {
+                '12-14岁': { avgScore: 48.3, highBurnout: 15.2 },
+                '15-17岁': { avgScore: 60.6, highBurnout: 26.8 },
+                '18-20岁': { avgScore: 65.2, highBurnout: 28.1 }
+            },
+            trendData: [
+                { month: '2024-06', avgScore: 55.2, highBurnout: 21.3 },
+                { month: '2024-07', avgScore: 57.1, highBurnout: 22.8 },
+                { month: '2024-08', avgScore: 56.8, highBurnout: 22.1 },
+                { month: '2024-09', avgScore: 59.2, highBurnout: 24.5 },
+                { month: '2024-10', avgScore: 58.8, highBurnout: 23.9 },
+                { month: '2024-11', avgScore: 58.2, highBurnout: 23.4 }
+            ]
+        };
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeAnimations();
+            initializeCharts();
+        });
+
+        // 初始化动画
+        function initializeAnimations() {
+            anime({
+                targets: '.fade-in',
+                opacity: [0, 1],
+                translateY: [20, 0],
+                duration: 800,
+                delay: anime.stagger(200),
+                easing: 'easeOutQuart'
+            });
+        }
+
+        // 初始化图表
+        function initializeCharts() {
+            createBurnoutDistributionChart();
+            createDimensionScoresChart();
+            createAgeComparisonChart();
+            createTrendAnalysisChart();
+        }
+
+        // 倦怠程度分布图
+        function createBurnoutDistributionChart() {
+            const chartDom = document.getElementById('burnout-distribution-chart');
+            charts.burnoutDistribution = echarts.init(chartDom);
+
+            const option = {
+                tooltip: {
+                    trigger: 'item',
+                    formatter: '{a} <br/>{b}: {c}% ({d}%)'
+                },
+                series: [{
+                    name: '倦怠程度',
+                    type: 'pie',
+                    radius: ['40%', '70%'],
+                    avoidLabelOverlap: false,
+                    itemStyle: {
+                        borderRadius: 10,
+                        borderColor: '#fff',
+                        borderWidth: 2
+                    },
+                    label: {
+                        show: false,
+                        position: 'center'
+                    },
+                    emphasis: {
+                        label: {
+                            show: true,
+                            fontSize: '16',
+                            fontWeight: 'bold'
+                        }
+                    },
+                    labelLine: {
+                        show: false
+                    },
+                    data: mockData.burnoutDistribution.map(item => ({
+                        value: item.value,
+                        name: item.name,
+                        itemStyle: { color: item.color }
+                    }))
+                }]
+            };
+
+            charts.burnoutDistribution.setOption(option);
+        }
+
+        // 各维度得分图
+        function createDimensionScoresChart() {
+            const chartDom = document.getElementById('dimension-scores-chart');
+            charts.dimensionScores = echarts.init(chartDom);
+
+            const dimensions = Object.keys(mockData.dimensionScores);
+            const scores = Object.values(mockData.dimensionScores);
+
+            const option = {
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'shadow'
+                    }
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                xAxis: {
+                    type: 'category',
+                    data: dimensions,
+                    axisLabel: {
+                        interval: 0,
+                        rotate: 0
+                    }
+                },
+                yAxis: {
+                    type: 'value',
+                    max: 100,
+                    axisLabel: {
+                        formatter: '{value}分'
+                    }
+                },
+                series: [{
+                    name: '平均得分',
+                    type: 'bar',
+                    data: scores.map((score, index) => ({
+                        value: score,
+                        itemStyle: {
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                { offset: 0, color: '#38b2ac' },
+                                { offset: 1, color: '#2c5282' }
+                            ])
+                        }
+                    })),
+                    barWidth: '60%',
+                    itemStyle: {
+                        borderRadius: [4, 4, 0, 0]
+                    }
+                }]
+            };
+
+            charts.dimensionScores.setOption(option);
+        }
+
+        // 年龄段对比图
+        function createAgeComparisonChart() {
+            const chartDom = document.getElementById('age-comparison-chart');
+            charts.ageComparison = echarts.init(chartDom);
+
+            const ages = Object.keys(mockData.ageComparison);
+            const avgScores = ages.map(age => mockData.ageComparison[age].avgScore);
+            const highBurnout = ages.map(age => mockData.ageComparison[age].highBurnout);
+
+            const option = {
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'cross',
+                        crossStyle: {
+                            color: '#999'
+                        }
+                    }
+                },
+                legend: {
+                    data: ['平均得分', '高度倦怠比例']
+                },
+                xAxis: {
+                    type: 'category',
+                    data: ages,
+                    axisPointer: {
+                        type: 'shadow'
+                    }
+                },
+                yAxis: [
+                    {
+                        type: 'value',
+                        name: '平均得分',
+                        min: 0,
+                        max: 100,
+                        axisLabel: {
+                            formatter: '{value}分'
+                        }
+                    },
+                    {
+                        type: 'value',
+                        name: '高度倦怠比例',
+                        min: 0,
+                        max: 40,
+                        axisLabel: {
+                            formatter: '{value}%'
+                        }
+                    }
+                ],
+                series: [
+                    {
+                        name: '平均得分',
+                        type: 'bar',
+                        data: avgScores,
+                        itemStyle: {
+                            color: '#3b82f6',
+                            borderRadius: [4, 4, 0, 0]
+                        }
+                    },
+                    {
+                        name: '高度倦怠比例',
+                        type: 'line',
+                        yAxisIndex: 1,
+                        data: highBurnout,
+                        itemStyle: {
+                            color: '#ef4444'
+                        },
+                        lineStyle: {
+                            width: 3
+                        }
+                    }
+                ]
+            };
+
+            charts.ageComparison.setOption(option);
+        }
+
+        // 趋势分析图
+        function createTrendAnalysisChart() {
+            const chartDom = document.getElementById('trend-analysis-chart');
+            charts.trendAnalysis = echarts.init(chartDom);
+
+            const months = mockData.trendData.map(item => item.month);
+            const avgScores = mockData.trendData.map(item => item.avgScore);
+            const highBurnout = mockData.trendData.map(item => item.highBurnout);
+
+            const option = {
+                tooltip: {
+                    trigger: 'axis'
+                },
+                legend: {
+                    data: ['平均得分', '高度倦怠比例']
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: months
+                },
+                yAxis: [
+                    {
+                        type: 'value',
+                        name: '平均得分',
+                        min: 50,
+                        max: 65,
+                        axisLabel: {
+                            formatter: '{value}分'
+                        }
+                    },
+                    {
+                        type: 'value',
+                        name: '高度倦怠比例',
+                        min: 20,
+                        max: 30,
+                        axisLabel: {
+                            formatter: '{value}%'
+                        }
+                    }
+                ],
+                series: [
+                    {
+                        name: '平均得分',
+                        type: 'line',
+                        data: avgScores,
+                        smooth: true,
+                        itemStyle: {
+                            color: '#10b981'
+                        },
+                        areaStyle: {
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                { offset: 0, color: 'rgba(16, 185, 129, 0.3)' },
+                                { offset: 1, color: 'rgba(16, 185, 129, 0.1)' }
+                            ])
+                        }
+                    },
+                    {
+                        name: '高度倦怠比例',
+                        type: 'line',
+                        yAxisIndex: 1,
+                        data: highBurnout,
+                        smooth: true,
+                        itemStyle: {
+                            color: '#ef4444'
+                        }
+                    }
+                ]
+            };
+
+            charts.trendAnalysis.setOption(option);
+        }
+
+        // 应用筛选
+        function applyFilters() {
+            const ageFilter = document.getElementById('age-filter').value;
+            const genderFilter = document.getElementById('gender-filter').value;
+            const timeFilter = document.getElementById('time-filter').value;
+
+            // 这里可以根据筛选条件更新图表数据
+            // 为了演示，我们只是显示一个提示
+            alert(`筛选条件已应用：\n年龄段: ${ageFilter}\n性别: ${genderFilter}\n时间范围: ${timeFilter}`);
+
+            // 实际应用中，这里应该调用API获取筛选后的数据，然后更新图表
+        }
+
+        // 响应式处理
+        window.addEventListener('resize', () => {
+            Object.values(charts).forEach(chart => {
+                if (chart && chart.resize) {
+                    chart.resize();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
